@@ -1,1 +1,41 @@
+name: Update Nitro Widget
 
+on:
+  workflow_dispatch:
+
+  schedule:
+    # GitHub cron uses UTC.
+    # 21:17 UTC = 00:17 the next day in Qatar.
+    - cron: "17 21 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nitro-widget-daily-update
+  cancel-in-progress: true
+
+jobs:
+  update-widget:
+    name: Update Discord widget
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Update Nitro widget
+        run: node update-widget.mjs
+        env:
+          DISCORD_APP_ID: ${{ secrets.DISCORD_APP_ID }}
+          DISCORD_USER_ID: ${{ secrets.DISCORD_USER_ID }}
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+
+          NITRO_START_DATE: "2026-03-15"
+          WIDGET_TIME_ZONE: "Asia/Qatar"
