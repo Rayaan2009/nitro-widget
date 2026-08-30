@@ -1,41 +1,28 @@
-name: Update Nitro Widget
+name: Nitro Anniversary Update
 
 on:
-  workflow_dispatch:
-
   schedule:
-    # GitHub cron uses UTC.
-    # 21:17 UTC = 00:17 the next day in Qatar.
-    - cron: "17 21 * * *"
-
-permissions:
-  contents: read
-
-concurrency:
-  group: nitro-widget-daily-update
-  cancel-in-progress: true
+    - cron: '45 20 * * *' # Wakes up 15 minutes early to bypass the GitHub queue
+  workflow_dispatch: 
 
 jobs:
   update-widget:
-    name: Update Discord widget
     runs-on: ubuntu-latest
-    timeout-minutes: 5
-
     steps:
-      - name: Check out repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "24"
+          node-version: '20'
 
-      - name: Update Nitro widget
-        run: node update-widget.mjs
+      - name: Install dependencies
+        run: npm install axios dotenv
+
+      - name: Run Update Script
         env:
           DISCORD_APP_ID: ${{ secrets.DISCORD_APP_ID }}
           DISCORD_USER_ID: ${{ secrets.DISCORD_USER_ID }}
           DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
-
-          NITRO_START_DATE: "2026-03-15"
-          WIDGET_TIME_ZONE: "Asia/Qatar"
+        run: node update-widget.mjs
