@@ -1,3 +1,18 @@
+// Calculate time until exactly 9:00 PM UTC (12:00 AM local)
+const targetTime = new Date();
+targetTime.setUTCHours(21, 0, 0, 0); // Sets target to exactly 21:00:00.000 UTC
+
+const timeToWait = targetTime.getTime() - Date.now();
+
+if (timeToWait > 0) {
+  console.log(`Waiting ${Math.floor(timeToWait / 1000)} seconds for exact midnight strike...`);
+  // Pauses the script execution until the target time
+  await new Promise(resolve => setTimeout(resolve, timeToWait)); 
+}
+
+console.log("Striking midnight. Executing Discord update...");
+// Place your existing axios/Discord patch request immediately below this
+
 const REQUIRED_VARIABLES = [
   "DISCORD_APP_ID",
   "DISCORD_USER_ID",
